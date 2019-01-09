@@ -12,9 +12,16 @@
     //variável global boneco
     int boneco=0;
     int round =0;
-    int tentativas=-1;
-    int main(void)
-    {
+    int tentativas=2;
+    int n;
+
+
+
+
+
+
+
+
 
 
 
@@ -51,6 +58,14 @@ ALLEGRO_BITMAP *imagem23 = NULL;
 ALLEGRO_BITMAP *imagem24 = NULL;
 ALLEGRO_BITMAP *imagem25 = NULL;
 ALLEGRO_BITMAP *imagem26 = NULL;
+ALLEGRO_BITMAP *imagem27 = NULL;
+
+
+
+
+
+
+
 
 
  // Carrega a imagem
@@ -112,10 +127,12 @@ ALLEGRO_BITMAP *imagem26 = NULL;
          imagem20 = al_load_bitmap("img\\t.png");
         imagem21 = al_load_bitmap("img\\u.png");
         imagem22 = al_load_bitmap("img\\v.png");
-         imagem23 = al_load_bitmap("img\\x.png");
+        imagem23 = al_load_bitmap("img\\x.png");
         imagem24 = al_load_bitmap("img\\w.png");
         imagem25 = al_load_bitmap("img\\y.png");
          imagem26 = al_load_bitmap("img\\z.png");
+         //spc é bloco vazio
+          imagem27 = al_load_bitmap("img\\spc.png");
 
 
 
@@ -159,13 +176,13 @@ ALLEGRO_BITMAP *imagem26 = NULL;
          al_draw_bitmap(imagem25, 300, 375,0);
          al_draw_bitmap(imagem26, 300, 425, 0);
 
-         /*
-                         ATENÇÂO
-          deve-se inserir dois blocos vazios para ocupar os espaços vazios.
-        // al_draw_bitmap(imagem23, 300, 475, 0);
-        // al_draw_bitmap(imagem24, 300, 525, 0);
 
-        */
+
+
+         al_draw_bitmap(imagem27, 300, 475, 0);
+        al_draw_bitmap(imagem27, 300, 525, 0);
+
+
 
 
 
@@ -176,22 +193,223 @@ ALLEGRO_BITMAP *imagem26 = NULL;
         al_flip_display();
 
 
-        }
+
 
         //ffim função
 
         //vai definir as rodadas
-        while(round<=5){
 
-     tela();
-     break;
-        }
 
         // Segura a execução por 10 segundos
-        al_rest(3.0);
+        al_rest(21.0);
 
         // Finaliza a janela
         al_destroy_display(janela);
 
-        return 0;
+ }
+
+
+
+
+
+
+  int main(void)
+    {
+
+
+
+
+  partida();
+
+    return 0;
+
     }
+
+
+
+
+
+char palavra[20];
+char forca[20];
+char erros[27];
+
+
+
+ char palavras[][157] = {"cachorro","gato", "cavalo", "elefante", "ornitorrinco","avestruz","coruja","cegonha",/*0-7*/
+"abelha","anta","aranha","borboleta","besouro","barata","coelho","canguru","esquilo",/*8-16*/
+"formiga","flamingo","golfinho","guaxinim","gorila","hamster","hiena","galo","lagartixa",/*17-25*/
+"marreco","orangotango","pinguim","quimera","rinoceronte","salamandra","seriema","tucano","vespa",/*26-34*/
+"burro","baleia","camelo","cabra","hipopotamo","iguana",/*35-40*/
+"William Bonner","Zeca Camargo","Pedro Bial","Gloria Maria","George Clooney","Bono Vox","Shakira",/*41-48*/
+"Madonna","Brad Pitt","Angelina Jolie","Jim Carrey","Ivete Sangalo","Dilma Rousseff","Johnny Depp",/*49-55*/
+"Ziraldo","Xuxa","Adolf Hitler","Fiodor Dostoievski","John Kennedy","Juscelino Kubitschek",/*56-61*/
+"Mahatma Gandhi","Benito Mussolini","Fidel Castro","Che Guevara","Nelson Mandela","Albert Einstein",/*62-67*/
+"Santos Dumont","Graham Bell","Mozart", "Aristóteles","Arquimedes","Caetano Veloso","Candido Portinari",/*68-74*/
+"Clarice lispector","Charles Darwin","Elvis Presley","Monteiro Lobato","Leonardo da Vinci","Carmem Miranda",/*75-80*/
+"China","Estados unidos","Indonesia","Brasil","Bangladesh","Alemanha","Egito","Turquia","Reino Unido","Espanha",/*81-90*/
+"Argentina","Marrocos","Iraque","Nepal","Venezuela","Gana","Taiwan","Rio de Janeiro","Sri Lanka","Costa do Marfim",/*91-100*/
+"Madagascar","Chile","Equador","Camboja","Guatemala","Angola","Portugal","Hungria","Haiti","Honduras",/*101-110*/
+"Israel","Hong Kong","Paraguai","Serra Leoa","Dinamarca","Eslovaquia","Noruega","Costa Rica","Inglaterra","Irlanda",/*111-120*/
+"casaco","coroa","lente","travesseiro","xampu","colher","agulha","banco","brinco","sacola","balde","pente","telha", /*121-133*/
+"torneira","moeda","guardanapo","chave","espelho","isqueiro","envelope","sabonete","ampulheta","grampeador","pantufa",/*134-144*/
+"toalha","anzol","bexiga","cartola","prato","gaveta","gaiola","cortina","canivete","vassoura","garrafa","dentadura",/*135-156*/
+"chinelo","celular","funil","lixeira"/*157-160*/};
+
+#if defined(__MINGW32__) || defined(_MSC_VER)
+#define limpar_input() fflush(stdin)
+#define limpar_tela() system("cls")
+#else
+#define limpar_input() __fpurge(stdin)
+#define limpar_tela() system("clear")
+#endif
+
+void limparBuffer(char *buf, int tamanho) {
+    int i = 0;
+    for (i = 0; i < tamanho; i++) {
+        buf[i] = 0;
+    }
+}
+
+void trimEnd(char *str) { //Tira o \n que o fgets lê junto com a variavel pra ir para a ultima linha
+    int p;
+    for (p = strlen(str); isspace(str[p]); p--) {
+        str[p] = 0;
+    }
+}
+
+int ehLetra(char c) {
+    return (c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z');
+}
+
+char maiuscula(char c) {
+    return (c >= 'a' && c <= 'z') ? (c - 32) : c;
+}
+
+void start(void) {
+    limparBuffer(palavra, 20);
+    limparBuffer(forca, 20);
+    limparBuffer(erros, 27);
+
+   // printf("\nDigite uma palavra: ");
+   //gera palavra aleatória
+   n=sorteia();
+    strcpy(palavra, palavras[n]);
+
+    limpar_input();
+
+    trimEnd(palavra);
+
+    int i;
+    for (i = 0; palavra[i] != 0; i++) {
+        char c = palavra[i];
+        forca[i] = ehLetra(c) ? '_' : c;
+    }
+}
+
+int jogo(void) {
+    char tentativa;
+    int chances = 5;
+
+    int letras = 0;
+    int i;
+    for (i = 0; palavra[i] != 0; i++) {
+        if (ehLetra(palavra[i])) letras++;
+    }
+
+    while (chances > 0) {
+        limpar_tela();
+        printf("\nChances: %d - palavras tem %d letras\n\n", chances, letras);
+
+        printf("%s", forca);
+        if (strlen(erros) > 0) {
+            printf("\nErros: %s", erros);
+        }
+
+        printf("\n\nDigite uma letra: ");
+        scanf("%c", &tentativa);
+        limpar_input();
+
+        // Se o usuário digitou algo que não é letra, apenas insiste sem queimar uma chance.
+        if (!ehLetra(tentativa)) continue;
+
+        // Se o usuário digitou algo que ele já tentou antes (seja errando ou acertando), apenas insiste sem queimar uma chance.
+        int jaTentou = 0;
+        for (i = 0; erros[i] != 0; i++) {
+            if (erros[i] == maiuscula(tentativa)) {
+                jaTentou = 1;
+                break;
+            }
+        }
+        if (jaTentou) continue;
+        for (i = 0; forca[i] != 0; i++) {
+            if (maiuscula(forca[i]) == maiuscula(tentativa)) {
+                jaTentou = 1;
+                break;
+            }
+        }
+        if (jaTentou) continue;
+
+        int ganhou = 1;
+        int achou = 0;
+        for (i = 0; palavra[i] != 0; i++) {
+            if (!ehLetra(palavra[i])) continue;
+            if (forca[i] == '_') {
+                if (maiuscula(palavra[i]) == maiuscula(tentativa)) {
+                    forca[i] = palavra[i];
+                    achou = 1;
+                } else {
+                    ganhou = 0;
+                }
+            }
+        }
+
+        if (ganhou) {
+            return 1; // Ou seja, ganhou.
+        }
+
+        if (!achou) {
+            chances--;
+            proximo_boneco();
+            erros[strlen(erros)] = maiuscula(tentativa);
+
+        }
+    }
+    return 0; // Ou seja, perdeu.
+}
+
+void mostrarResultado(int resultado) {
+    limpar_input();
+    if (resultado == 0) {
+        printf("\nVoce perdeu. \nA palavra era %s", palavra);
+    } else {
+        printf("\nParabens, voce acertou a palavra %s ", palavra);
+    }
+}
+
+int partida() {
+    start();
+
+    int resultado = jogo();
+    mostrarResultado(resultado);
+    return 0;
+}
+
+
+
+
+
+
+
+    int sorteia(int n){
+
+    srand(time(NULL));
+     n= rand() % 156;
+
+   return n;
+
+
+    }
+
+
+
+
